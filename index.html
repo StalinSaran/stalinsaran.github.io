@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stalin M — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a survey-map sheet. Living contour-line hero with portrait, then clean panels that rise in as you scroll. */
+:root{
+  --paper:#f4f6f3;
+  --surface:#ffffff;
+  --ink:#10232b;
+  --muted:#5a6b70;
+  --line:#dbe2dd;
+  --water:#1b6984;
+  --land:#5f7f43;
+  --accent:#c8641e;
+  --deep:#0f2530;
+  --on-deep:#e8f0ee;
+  --display:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --shadow:0 1px 2px rgba(16,35,43,.05),0 12px 32px -12px rgba(16,35,43,.18);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0d181d; --surface:#132228; --ink:#e6eeeb; --muted:#9db0b2;
+    --line:#233b44; --water:#5ab3d2; --land:#9cc077; --accent:#ef9450;
+    --deep:#081216; --on-deep:#e6eeeb;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -14px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0d181d; --surface:#132228; --ink:#e6eeeb; --muted:#9db0b2;
+  --line:#233b44; --water:#5ab3d2; --land:#9cc077; --accent:#ef9450;
+  --deep:#081216; --on-deep:#e6eeeb;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -14px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:var(--water);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-family:var(--display);line-height:1.12;text-wrap:balance;margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+
+/* Scroll progress */
+#progress{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--water),var(--land),var(--accent));z-index:20}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:10;transition:background .3s,box-shadow .3s,border-color .3s;border-bottom:1px solid transparent}
+nav.scrolled{background:color-mix(in srgb,var(--paper) 86%,transparent);backdrop-filter:saturate(1.4) blur(10px);border-color:var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:66px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;letter-spacing:.02em;color:var(--ink);text-decoration:none}
+.brand-mark{width:30px;height:30px;border-radius:8px;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-size:14px}
+.navlinks{display:flex;gap:6px;font-size:15px}
+.navlinks a{position:relative;color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:8px;transition:color .2s}
+.navlinks a::after{content:"";position:absolute;left:12px;right:12px;bottom:4px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s ease}
+.navlinks a:hover,.navlinks a.active{color:var(--ink)}
+.navlinks a.active::after,.navlinks a:hover::after{transform:scaleX(1)}
+.nav-cta{font-size:14px;font-weight:600;padding:9px 16px;border-radius:999px;background:var(--ink);color:var(--paper);text-decoration:none;transition:transform .2s}
+.nav-cta:hover{transform:translateY(-1px)}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;margin-top:-66px;padding-top:66px}
+#contours{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero .wrap{position:relative;padding-top:64px;padding-bottom:80px;display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.04em;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--surface) 70%,transparent)}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--land);box-shadow:0 0 0 0 color-mix(in srgb,var(--land) 60%,transparent);animation:pulse 2.2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.hero h1{font-size:clamp(46px,7.2vw,92px);font-weight:800;letter-spacing:-.03em;margin:20px 0 10px}
+.hero h1 .hi{display:block;font-size:.32em;font-weight:600;letter-spacing:0;color:var(--muted);margin-bottom:6px}
+.role{font-family:var(--display);font-weight:600;font-size:clamp(19px,2.3vw,26px);color:var(--ink);margin:0 0 22px;min-height:1.4em}
+.role .rot{color:var(--water);border-right:2px solid var(--accent);padding-right:4px;animation:caret 1s steps(1) infinite}
+@keyframes caret{50%{border-color:transparent}}
+.lede{max-width:54ch;color:var(--muted);margin:0 0 32px;font-size:18px}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid var(--ink);color:var(--ink);background:transparent;overflow:hidden;transition:transform .25s ease,box-shadow .25s ease,color .25s}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.btn svg{width:17px;height:17px;transition:transform .25s}
+.btn:hover svg.arrow{transform:translateX(3px)}
+
+.portrait{position:relative;justify-self:center;width:min(420px,100%)}
+.photo-frame{position:relative;aspect-ratio:4/5;border-radius:28px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow);transform-style:preserve-3d;transition:transform .4s ease}
+.photo-frame img{width:100%;height:100%;object-fit:cover;object-position:60% 30%;transform:scale(1.04);transition:transform .8s ease}
+.portrait:hover .photo-frame img{transform:scale(1.08)}
+.photo-frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(16,35,43,.35));pointer-events:none}
+.ring{position:absolute;inset:-22px;border:1.5px dashed color-mix(in srgb,var(--water) 45%,transparent);border-radius:40px;animation:spin 40s linear infinite;pointer-events:none}
+.ring.two{inset:-42px;border-style:solid;border-color:color-mix(in srgb,var(--land) 22%,transparent);border-radius:52px;animation-duration:60s;animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.badge{position:absolute;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;box-shadow:var(--shadow);font-size:14px;font-weight:600;animation:float 6s ease-in-out infinite}
+.badge small{display:block;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--muted);letter-spacing:.04em}
+.badge .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;flex:none}
+.badge.b1{left:-34px;top:16%}
+.badge.b1 .ic{background:var(--water)}
+.badge.b2{right:-28px;bottom:14%;animation-delay:-3s}
+.badge.b2 .ic{background:var(--land)}
+@keyframes float{50%{transform:translateY(-10px)}}
+
+/* Load-in (finishes by itself) */
+.in{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+.d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.35s}.d5{animation-delay:.45s}.d6{animation-delay:.3s}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+/* Scroll reveal: content is visible at rest; the class only replays an entrance as it nears view */
+.reveal.play{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+
+/* Marquee */
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);overflow:hidden;padding:16px 0}
+.track{display:flex;gap:48px;width:max-content;animation:scroll 38s linear infinite;font-family:var(--mono);font-size:14px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.track span{display:flex;align-items:center;gap:48px;white-space:nowrap}
+.track span::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.marquee:hover .track{animation-play-state:paused}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* Sections */
+section.block{padding:100px 0}
+.kicker{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:28px;height:1.5px;background:currentColor}
+.block h2{font-size:clamp(30px,3.8vw,44px);font-weight:700;letter-spacing:-.015em;margin-bottom:20px}
+.head{max-width:720px;margin-bottom:44px}
+.head p{color:var(--muted);margin:0;max-width:62ch}
+
+/* About */
+.about{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:start}
+.about p{margin:0 0 16px;max-width:62ch}
+.focus{display:grid;gap:14px}
+.focus-item{display:flex;gap:16px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;transition:transform .3s ease,box-shadow .3s ease,border-color .3s}
+.focus-item:hover{transform:translateX(6px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--water) 40%,var(--line))}
+.focus-item .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--water) 12%,transparent);color:var(--water)}
+.focus-item:nth-child(2) .ic{background:color-mix(in srgb,var(--land) 14%,transparent);color:var(--land)}
+.focus-item:nth-child(3) .ic{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+.focus-item svg{width:20px;height:20px}
+.focus-item h3{font-size:17px;margin-bottom:2px}
+.focus-item p{margin:0;font-size:15px;color:var(--muted)}
+
+/* Skills */
+.skills-wrap{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.skill-groups{display:grid;grid-template-columns:1.6fr 1fr;gap:28px}
+.group h3{font-size:15px;font-family:var(--mono);font-weight:500;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{padding:9px 15px;border:1px solid var(--line);background:var(--paper);border-radius:999px;font-size:15px;transition:transform .25s ease,border-color .25s,background .25s,color .25s;cursor:default}
+.chip:hover{transform:translateY(-3px);border-color:var(--water);color:var(--water)}
+.chip.tech{border-color:color-mix(in srgb,var(--water) 40%,var(--line));color:var(--water);background:color-mix(in srgb,var(--water) 7%,var(--paper))}
+.reveal.play .chip{animation:pop .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 45ms + .15s)}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+
+/* Experience timeline */
+.timeline{position:relative;padding-left:40px}
+.timeline::before{content:"";position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--water),var(--land))}
+.node{position:absolute;left:0;top:30px;width:24px;height:24px;border-radius:50%;background:var(--paper);border:2px solid var(--water);display:grid;place-items:center}
+.node::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2.4s infinite}
+.job{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:30px 32px;box-shadow:var(--shadow)}
+.job-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 20px;align-items:flex-start;margin-bottom:18px}
+.job h3{font-size:24px}
+.job .org{color:var(--water);font-weight:600;margin-top:2px}
+.when{font-family:var(--mono);font-size:13px;color:var(--land);background:color-mix(in srgb,var(--land) 12%,transparent);padding:5px 12px;border-radius:999px;white-space:nowrap}
+.job ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:14px 28px}
+.job li{position:relative;padding-left:22px;font-size:16px}
+.job li::before{content:"";position:absolute;left:0;top:.62em;width:10px;height:2px;background:var(--accent)}
+.data-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;padding-top:20px;border-top:1px dashed var(--line)}
+.data-strip span{font-family:var(--mono);font-size:12px;padding:5px 10px;border-radius:6px;background:color-mix(in srgb,var(--water) 10%,transparent);color:var(--water)}
+
+/* Projects */
+.projects{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.proj{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px 26px;display:flex;flex-direction:column;gap:12px;overflow:hidden;transition:transform .35s ease,box-shadow .35s ease,border-color .35s}
+.proj::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--c,var(--water));transform:scaleX(.18);transform-origin:left;transition:transform .45s ease}
+.proj:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:transparent}
+.proj:hover::before{transform:scaleX(1)}
+.proj .pic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--c,var(--water)) 13%,transparent);color:var(--c,var(--water))}
+.proj .pic svg{width:24px;height:24px}
+.proj .tag{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+.proj h3{font-size:20px}
+.proj p{margin:0;font-size:15.5px;color:var(--muted)}
+
+/* Education */
+.edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.edu-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;display:grid;gap:16px;align-content:start}
+.edu-card h3.t{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.school{display:flex;gap:16px;align-items:flex-start;padding:14px 0;border-bottom:1px dashed var(--line)}
+.school:last-child{border-bottom:0;padding-bottom:0}
+.school .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--water) 12%,transparent);color:var(--water)}
+.school .ic svg{width:22px;height:22px}
+.school b{display:block;font-family:var(--display);font-size:18px}
+.school span{color:var(--muted);font-size:15px}
+.certs{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.certs li{display:flex;gap:14px;align-items:center;padding:12px 10px;border-radius:12px;font-size:15.5px;transition:background .25s}
+.certs li:hover{background:var(--paper)}
+.certs .k{font-family:var(--mono);font-size:11px;color:var(--land);border:1px solid currentColor;border-radius:6px;padding:2px 8px;white-space:nowrap;min-width:72px;text-align:center}
+
+/* Contact */
+.contact{background:var(--deep);color:var(--on-deep);border-radius:28px;padding:64px 56px;position:relative;overflow:hidden}
+.contact::before{content:"";position:absolute;width:520px;height:520px;right:-160px;top:-200px;border-radius:50%;border:1px solid rgba(255,255,255,.08);box-shadow:0 0 0 40px rgba(255,255,255,.025),0 0 0 80px rgba(255,255,255,.02),0 0 0 120px rgba(255,255,255,.015)}
+.contact .kicker{color:#f1a066}
+.contact h2{color:var(--on-deep);max-width:18ch}
+.contact p{color:rgba(232,240,238,.72);max-width:56ch;margin:0 0 34px}
+.contact-grid{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.contact-grid a{display:flex;gap:14px;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:18px 20px;text-decoration:none;color:var(--on-deep);transition:background .3s,transform .3s,border-color .3s}
+.contact-grid a:hover{background:rgba(255,255,255,.1);transform:translateY(-3px);border-color:rgba(255,255,255,.3)}
+.contact-grid .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.1);flex:none}
+.contact-grid svg{width:19px;height:19px}
+.contact-grid small{display:block;font-family:var(--mono);font-size:11px;color:rgba(232,240,238,.6);text-transform:uppercase;letter-spacing:.08em}
+.contact-grid strong{font-weight:500;font-size:15px;word-break:break-word}
+footer{padding:36px 0 48px;font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.top-btn{color:var(--muted);text-decoration:none}
+.top-btn:hover{color:var(--ink)}
+
+@media (max-width:960px){
+  .hero .wrap{grid-template-columns:1fr;gap:64px;padding-top:40px}
+  .portrait{width:min(360px,82%)}
+  .about,.skill-groups,.edu-grid{grid-template-columns:1fr}
+  .projects,.contact-grid{grid-template-columns:1fr}
+  .job ul{grid-template-columns:1fr}
+  .navlinks{display:none}
+  section.block{padding:72px 0}
+  .contact{padding:44px 26px}
+}
+@media (max-width:480px){
+  .wrap{padding:0 18px}
+  .badge.b1{left:-12px}.badge.b2{right:-10px}
+  .timeline{padding-left:0}.timeline::before,.node{display:none}
+  .job{padding:24px 20px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div id="progress" aria-hidden="true"></div>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="brand-mark">SM</span>Stalin M</a>
+    <div class="navlinks">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#education">Education</a>
+    </div>
+    <a class="nav-cta" href="#contact">Contact</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="contours" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div>
+      <span class="eyebrow in d1"><span class="pulse"></span>Tirunelveli, Tamil Nadu · Open to opportunities</span>
+      <h1 class="in d2"><span class="hi">Hello, I'm</span>Stalin M</h1>
+      <p class="role in d3">Business Development Analyst for <span class="rot" id="rot">geospatial solutions</span></p>
+      <p class="lede in d4">I turn GIS, remote sensing and geospatial AI into clear business value by researching opportunities, understanding what clients need and shaping the proposals that connect the two.</p>
+      <div class="actions in d5">
+        <a class="btn primary" href="https://www.linkedin.com/in/stalin-saran-721916343/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.6 8.65 21 11.2 21 14.5V21h-4v-5.8c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.52-2.25 3.1V21H9z"/></svg>
+          Connect on LinkedIn
+        </a>
+        <a class="btn" href="#experience">View my work
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="portrait in d6" id="portrait">
+      <div class="ring"></div><div class="ring two"></div>
+      <div class="photo-frame" id="frame">
+        <img src="images/stalin.jpg" alt="Portrait of Stalin M">
+      </div>
+      <div class="badge b1">
+        <span class="ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span>
+        <span>Geospatial AI<small>GIS · REMOTE SENSING</small></span>
+      </div>
+      <div class="badge b2">
+        <span class="ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7h18v13H3zM8 7V4h8v3"/></svg></span>
+        <span>Thazhal Geospatial<small>BUSINESS ANALYST · 2025</small></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="marquee" aria-hidden="true">
+  <div class="track">
+    <span>Business Development</span><span>Market Research</span><span>GIS</span><span>Remote Sensing</span><span>Proposals &amp; Pitch Decks</span><span>Stakeholder Engagement</span><span>Satellite Imagery</span><span>LiDAR</span><span>Drone Data</span><span>CSR Outreach</span>
+    <span>Business Development</span><span>Market Research</span><span>GIS</span><span>Remote Sensing</span><span>Proposals &amp; Pitch Decks</span><span>Stakeholder Engagement</span><span>Satellite Imagery</span><span>LiDAR</span><span>Drone Data</span><span>CSR Outreach</span>
+  </div>
+</div>
+
+<main>
+  <section class="block" id="about">
+    <div class="wrap about">
+      <div class="reveal">
+        <div class="kicker">About me</div>
+        <h2>Bridging technology and business growth</h2>
+        <p>I'm a Business Analyst with a Computer Science background, supporting business development for technology-driven geospatial solutions at Thazhal Geospatial Analytics.</p>
+        <p>My work sits between clients and engineers: I research opportunities, understand client and stakeholder requirements, prepare proposals and presentations, and coordinate with technical teams so complex solutions come across as clear business value.</p>
+        <p>I'm especially interested in market research, strategic partnerships, client engagement and technology-led growth.</p>
+      </div>
+      <div class="focus reveal">
+        <div class="focus-item">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+          <div><h3>Opportunity research</h3><p>Government, infrastructure, environmental, forestry and CSR programmes.</p></div>
+        </div>
+        <div class="focus-item">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16v12H5l-1 4z"/></svg></span>
+          <div><h3>Client &amp; stakeholder engagement</h3><p>Tailored outreach, meeting requests and follow-ups.</p></div>
+        </div>
+        <div class="focus-item">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 20h18M6 16V9M11 16V5M16 16v-5"/></svg></span>
+          <div><h3>Proposals &amp; positioning</h3><p>Concept notes, pitch decks and solution briefs that show business outcomes.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block skills-wrap" id="skills">
+    <div class="wrap">
+      <div class="head reveal">
+        <div class="kicker">Core competencies</div>
+        <h2>What I bring to the table</h2>
+      </div>
+      <div class="skill-groups">
+        <div class="group reveal">
+          <h3>Business</h3>
+          <div class="chips">
+            <span class="chip" style="--i:0">Business Development &amp; Opportunity Research</span>
+            <span class="chip" style="--i:1">Market &amp; Competitor Research</span>
+            <span class="chip" style="--i:2">Client Requirement Analysis</span>
+            <span class="chip" style="--i:3">Proposals, Pitch Decks &amp; Presentations</span>
+            <span class="chip" style="--i:4">Stakeholder Engagement &amp; Follow-ups</span>
+            <span class="chip" style="--i:5">Government, CSR &amp; Institutional Outreach</span>
+            <span class="chip" style="--i:6">Solution Positioning &amp; Value Proposition</span>
+            <span class="chip" style="--i:7">Cross-functional Coordination</span>
+            <span class="chip" style="--i:8">Business Communication &amp; Documentation</span>
+          </div>
+        </div>
+        <div class="group reveal">
+          <h3>Technical &amp; tools</h3>
+          <div class="chips">
+            <span class="chip tech" style="--i:0">GIS</span>
+            <span class="chip tech" style="--i:1">Remote Sensing</span>
+            <span class="chip tech" style="--i:2">Geospatial AI</span>
+            <span class="chip tech" style="--i:3">Satellite Imagery</span>
+            <span class="chip tech" style="--i:4">LiDAR &amp; Drone Data</span>
+            <span class="chip" style="--i:5">SQL &amp; PL/SQL</span>
+            <span class="chip" style="--i:6">UX Design</span>
+            <span class="chip" style="--i:7">Microsoft Office</span>
+            <span class="chip" style="--i:8">Google Workspace</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="experience">
+    <div class="wrap">
+      <div class="head reveal">
+        <div class="kicker">Experience</div>
+        <h2>Where I work</h2>
+      </div>
+      <div class="timeline reveal">
+        <span class="node" aria-hidden="true"></span>
+        <article class="job">
+          <div class="job-head">
+            <div>
+              <h3>Business Analyst</h3>
+              <div class="org">Thazhal Geospatial Analytics Pvt. Ltd.</div>
+            </div>
+            <div class="when">2025 – Present</div>
+          </div>
+          <ul>
+            <li>Research business opportunities across government departments, infrastructure, environmental, forestry and CSR-focused programmes.</li>
+            <li>Support client outreach and stakeholder engagement with tailored communication, meeting requests and follow-up material.</li>
+            <li>Contribute to proposals, concept notes, presentations and solution briefs that translate technical capabilities into business outcomes.</li>
+            <li>Analyse programme and challenge requirements to assess relevance, eligibility and fit for the company's solutions.</li>
+            <li>Coordinate with technical teams to align solution capabilities with client needs and project objectives.</li>
+            <li>Support business positioning for solutions built on GIS, remote sensing, satellite imagery, LiDAR, drone data and AI-driven analytics.</li>
+          </ul>
+          <div class="data-strip" aria-label="Technologies">
+            <span>GIS</span><span>Satellite imagery</span><span>Sentinel-1 SAR</span><span>LiDAR</span><span>Drone data</span><span>AI analytics</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="projects" style="padding-top:0">
+    <div class="wrap">
+      <div class="head reveal">
+        <div class="kicker">Projects</div>
+        <h2>Selected projects &amp; solution exposure</h2>
+      </div>
+      <div class="projects">
+        <article class="proj reveal" style="--c:var(--land)">
+          <span class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 7 6-3 6 3 6-3v13l-6 3-6-3-6 3z"/><path d="M9 4v13M15 7v13"/></svg></span>
+          <div class="tag">Business development</div>
+          <h3>Geospatial Solutions</h3>
+          <p>Opportunity research and solution positioning for infrastructure monitoring, dam safety, environmental assessment, forestry, mangrove and wetland monitoring, and climate-risk assessment.</p>
+        </article>
+        <article class="proj reveal" style="--c:var(--water)">
+          <span class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 17c2-2 4-2 6 0s4 2 6 0 4-2 6 0M12 3v5"/></svg></span>
+          <div class="tag">Product communication</div>
+          <h3>SWOAD: Waterbody Monitoring</h3>
+          <p>Product communication and business-facing collateral for a Sentinel-1-based remote sensing solution that monitors waterbodies.</p>
+        </article>
+        <article class="proj reveal" style="--c:var(--accent)">
+          <span class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 14l3-3 3 2 4-5M8 21h8"/></svg></span>
+          <div class="tag">Proposal content</div>
+          <h3>Infrastructure &amp; Dam Safety Monitoring</h3>
+          <p>Business-facing descriptions and proposal content for monitoring solutions that show asset information, risk indicators and status on digital dashboards.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="education" style="padding-top:0">
+    <div class="wrap">
+      <div class="head reveal">
+        <div class="kicker">Education</div>
+        <h2>Education &amp; credentials</h2>
+      </div>
+      <div class="edu-grid">
+        <div class="edu-card reveal">
+          <h3 class="t">Where I studied</h3>
+          <div class="school">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span>
+            <div><b>National Engineering College</b><span>B.E., Computer Science &amp; Engineering</span></div>
+          </div>
+          <div class="school">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13M9 21v-6h6v6"/></svg></span>
+            <div><b>Francis Xavier CBSE School</b><span>Higher Secondary &amp; Secondary schooling</span></div>
+          </div>
+        </div>
+        <div class="edu-card reveal">
+          <h3 class="t">Certifications &amp; activities</h3>
+          <ul class="certs">
+            <li><span class="k">Certificate</span><span>Google UX Design, Coursera</span></li>
+            <li><span class="k">Internship</span><span>SQL &amp; PL/SQL, Oracle APEX User Group</span></li>
+            <li><span class="k">Papers</span><span>Paper presentations at P.S.N. College and Anna University, Tirunelveli</span></li>
+            <li><span class="k">Service</span><span>National Service Scheme (NSS)</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="contact" style="padding-top:0">
+    <div class="wrap">
+      <div class="contact reveal">
+        <div class="kicker">Get in touch</div>
+        <h2>Let's build something with geospatial data</h2>
+        <p>I'm open to conversations about partnerships, client projects and business development roles in geospatial and technology-led sectors.</p>
+        <div class="contact-grid">
+          <a href="mailto:stalin@thazhal.in">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+            <span><small>Email</small><strong>stalin@thazhal.in</strong></span>
+          </a>
+          <a href="tel:+918838586068">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span>
+            <span><small>Phone</small><strong>+91 88385 86068</strong></span>
+          </a>
+          <a href="https://www.linkedin.com/in/stalin-saran-721916343/" target="_blank" rel="noopener">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.6 8.65 21 11.2 21 14.5V21h-4v-5.8c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.52-2.25 3.1V21H9z"/></svg></span>
+            <span><small>LinkedIn</small><strong>Stalin Saran</strong></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Stalin M · Tirunelveli, India</span>
+    <a class="top-btn" href="#top">Back to top ↑</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Scroll progress + nav state */
+  const bar=document.getElementById('progress'), nav=document.getElementById('nav');
+  function onScroll(){
+    const h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+    bar.style.transform='scaleX('+(max>0?h.scrollTop/max:0)+')';
+    nav.classList.toggle('scrolled',h.scrollTop>10);
+  }
+  addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+  /* Active nav link */
+  const links=[...document.querySelectorAll('.navlinks a')];
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id));}})},{rootMargin:'-45% 0px -50% 0px'});
+    ['about','skills','experience','projects','education','contact'].forEach(id=>{const el=document.getElementById(id); if(el) io.observe(el);});
+
+    /* Reveal: elements stay visible; entrance plays once as they approach the viewport */
+    if(!reduce){
+      const vh=innerHeight;
+      const rv=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('play');rv.unobserve(e.target);}})},{rootMargin:'0px 0px 120px 0px'});
+      document.querySelectorAll('.reveal').forEach(el=>{ if(el.getBoundingClientRect().top>vh) rv.observe(el); });
+    }
+  }
+
+  /* Rotating role text */
+  const words=['geospatial solutions','GIS & remote sensing','client engagement','strategic partnerships','technology-led growth'];
+  const rot=document.getElementById('rot');
+  if(rot && !reduce){
+    let w=0,i=words[0].length,del=true;
+    setTimeout(function tick(){
+      const cur=words[w];
+      if(del){ i--; rot.textContent=cur.slice(0,i); if(i<=0){del=false;w=(w+1)%words.length;} setTimeout(tick,40); }
+      else { const nx=words[w]; i++; rot.textContent=nx.slice(0,i); if(i>=nx.length){del=true; setTimeout(tick,2200);} else setTimeout(tick,70); }
+    },2600);
+  }
+
+  /* Portrait tilt */
+  const p=document.getElementById('portrait'), f=document.getElementById('frame');
+  if(p && f && !reduce && matchMedia('(pointer:fine)').matches){
+    p.addEventListener('mousemove',e=>{const r=p.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;f.style.transform='perspective(900px) rotateY('+(x*8)+'deg) rotateX('+(-y*8)+'deg)';});
+    p.addEventListener('mouseleave',()=>{f.style.transform='';});
+  }
+
+  /* Living contour map */
+  const c=document.getElementById('contours'); if(!c) return;
+  const ctx=c.getContext('2d'); let W=0,H=0,t=0,colors={};
+  function size(){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;W=r.width;H=r.height;c.width=W*d;c.height=H*d;ctx.setTransform(d,0,0,d,0,0);
+    const cs=getComputedStyle(document.documentElement);colors={w:cs.getPropertyValue('--water').trim(),l:cs.getPropertyValue('--land').trim()};}
+  const peaks=[{x:.86,y:.3,n:13,p:[.4,2.1,4.3],c:'w'},{x:.12,y:1.02,n:11,p:[1.7,.3,3.2],c:'l'},{x:.55,y:-.12,n:8,p:[2.9,1.1,.6],c:'w'}];
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    peaks.forEach(pk=>{
+      const cx=pk.x*W,cy=pk.y*H;
+      for(let i=1;i<=pk.n;i++){
+        const base=i*30;ctx.beginPath();
+        for(let a=0;a<=Math.PI*2+.01;a+=.045){
+          const k=1+.17*Math.sin(3*a+pk.p[0]+t*.6)+.09*Math.sin(5*a+pk.p[1]+i*.18-t*.4)+.05*Math.sin(7*a+pk.p[2]+t*.3);
+          const x=cx+Math.cos(a)*base*k*1.3,y=cy+Math.sin(a)*base*k;
+          a===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+        }
+        const idx=i%5===0;
+        ctx.strokeStyle=colors[pk.c];ctx.globalAlpha=idx?.38:.14;ctx.lineWidth=idx?1.3:.8;ctx.stroke();
+      }
+    });
+    ctx.globalAlpha=1;
+  }
+  size();draw();
+  addEventListener('resize',()=>{size();draw();});
+  new MutationObserver(()=>{size();draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  if(!reduce){(function loop(){t+=.004;draw();requestAnimationFrame(loop);})();}
+})();
+</script>
+</body>
+</html>
